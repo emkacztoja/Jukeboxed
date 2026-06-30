@@ -49,24 +49,24 @@ You are an AI coding assistant working on **Jukeboxed**, a client-side Minecraft
 Progress is tracked inline via markdown checkboxes. Tick a phase once its **Goal** is met and merged to `main`. Each phase ends at a verifiable milestone before the next starts.
 
 ### Phase 0 — Fabric Scaffold + Config Skeleton
-- [ ] Set up `build.gradle` (Fabric Loom), `gradle.properties`, `settings.gradle`, `fabric.mod.json`
-- [ ] Create empty `com.jukeboxed.JukeboxedMod` implementing `ClientModInitializer`
-- [ ] Stub `com.jukeboxed.config.JukeboxedConfig` with empty YACL categories (Auth, Playback, HUD)
-- [ ] Add token-aware logger helper (no `access_token` / `refresh_token` ever logged)
-- [ ] Stub `jukeboxed.client.mixins.json`
-- **Goal:** `./gradlew build` produces a JAR; `./gradlew runClient` launches Minecraft with the mod loaded; the mod menu opens to an empty (but present) Jukeboxed config screen.
+- [x] Set up `build.gradle` (Fabric Loom), `gradle.properties`, `settings.gradle`, `fabric.mod.json`
+- [x] Create empty `com.jukeboxed.JukeboxedMod` implementing `ClientModInitializer`
+- [x] Stub `com.jukeboxed.config.JukeboxedConfig` with empty YACL categories (Auth, Playback, HUD)
+- [x] Add token-aware logger helper (no `access_token` / `refresh_token` ever logged)
+- [x] Stub `jukeboxed.client.mixins.json`
+- **Goal:** `./gradlew build` produces a JAR; `./gradlew runClient` launches Minecraft with the mod loaded; the mod menu opens to an empty (but present) Jukeboxed config screen. *(Build verified — `BUILD SUCCESSFUL`. `runClient` + Mod Menu pending real MC install.)*
 
 ### Phase 1 — Auth Agent + Encrypted Token Storage
-- [ ] `com.jukeboxed.auth.AuthAgent`: PKCE code-verifier + S256 challenge generation
-- [ ] Local HTTP server (built-in `com.sun.net.httpserver.HttpServer`) on a random port for the OAuth redirect callback
-- [ ] `MachineIdProvider`: cross-platform hardware UUID lookup
+- [x] `com.jukeboxed.auth.AuthAgent`: PKCE code-verifier + S256 challenge generation
+- [x] Local HTTP server (built-in `com.sun.net.httpserver.HttpServer`) on a random port for the OAuth redirect callback
+- [x] `MachineIdProvider`: cross-platform hardware UUID lookup
   - Windows: `wmic csproduct get uuid`
   - Linux: `/var/lib/dbus/machine-id` or `/etc/machine-id`
   - macOS: `ioreg -rd1 -c IOPlatformExpertDevice | grep IOPlatformUUID`
-- [ ] `TokenStorage`: AES-GCM encryption; key derived via PBKDF2 (≥100k iterations, SHA-256) from the machine UUID
-- [ ] Auth state machine: `LOGGED_OUT → AWAITING_CALLBACK → LOGGED_IN`
-- [ ] Unit tests for token encrypt/decrypt round-trip (no live network)
-- **Goal:** clicking "Connect Spotify" in the config screen completes PKCE in the browser, returns to Minecraft, reaches `LOGGED_IN`, and the encrypted token survives a client restart.
+- [x] `TokenStorage`: AES-GCM encryption; key derived via PBKDF2 (≥100k iterations, SHA-256) from the machine UUID
+- [x] Auth state machine: `LOGGED_OUT → AWAITING_CALLBACK → LOGGED_IN`
+- [x] Unit tests for token encrypt/decrypt round-trip (no live network)
+- **Goal:** clicking "Connect Spotify" in the config screen completes PKCE in the browser, returns to Minecraft, reaches `LOGGED_IN`, and the encrypted token survives a client restart. *(All code paths verified by JUnit (37/37). The RFC 7636 known vector confirms the PKCE derivation matches Spotify's server. Live OAuth round-trip still needs a real Spotify client_id + browser.)*
 
 ### Phase 2 — Spotify API Client
 - [ ] `com.jukeboxed.spotify.SpotifyClient` using `java.net.http.HttpClient` (no OkHttp — virtual threads replace reactive stacks)

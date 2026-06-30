@@ -1,0 +1,82 @@
+plugins {
+    // Loom 1.15+ uses a separate plugin ID for unobfuscated versions (MC 26.1+).
+    // yarn mappings are no longer provided for 26.1 — neither the mod nor Minecraft is remapped.
+    id 'net.fabricmc.fabric-loom' version '1.15.5'
+    id 'java'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    // 26.1 ships unobfuscated, so we don't need a remapped source set; use a single release target.
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    maven {
+        name = 'Fabric'
+        url = 'https://maven.fabricmc.net/'
+    }
+    maven {
+        // Required by yet-another-config-lib for org.quiltmc.parsers:json / :gson.
+        name = 'Quilt'
+        url = 'https://maven.quiltmc.org/repository/release'
+    }
+    mavenCentral()
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // UI config screen.
+    implementation "dev.isxander:yet-another-config-lib:${project.yacl_version}"
+
+    // JSON parsing (Phase 2 onwards).
+    implementation "com.google.code.gson:gson:${project.gson_version}"
+
+    // Tests.
+    testImplementation platform("org.junit:junit-bom:${project.junit_version}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release.set(25)
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        exceptionFormat = 'full'
+    }
+}
+
+// Sanity-check the mod metadata is in place before the build produces a JAR.
+tasks.named('jar') {
+    manifest {
+        attributes([
+            'Minecraft-Version': project.minecraft_version,
+            'Loader':           project.loader_version,
+            'Implementation-Title': project.archives_base_name,
+            'Implementation-Version': project.mod_version
+        ])
+    }
+}

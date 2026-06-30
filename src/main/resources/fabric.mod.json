@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "jukeboxed",
+  "version": "${version}",
+  "name": "Jukeboxed",
+  "description": "A context-aware algorithmic DJ for Minecraft, powered by Spotify.",
+  "authors": [
+    "Aleksander Kowalczuk"
+  ],
+  "contact": {
+    "homepage": "https://github.com/emkacztoja/Jukeboxed",
+    "sources": "https://github.com/emkacztoja/Jukeboxed.git",
+    "issues": "https://github.com/emkacztoja/Jukeboxed/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/jukeboxed/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.jukeboxed.JukeboxedMod"
+    ]
+  },
+  "mixins": [
+    {
+      "config": "jukeboxed.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "minecraft": "~26.1",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
